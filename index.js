@@ -68,6 +68,41 @@ app.post("/search", async (req, res) => {
   }
 });
 
+app.post("/select", async (req, res) => {
+  const { gameId, gameName, imageId } = req.body;
+
+  if (!gameId) {
+    return res.redirect("/");
+  }
+
+  const selectedGame = {
+    id: gameId,
+    name: gameName,
+    imageUrl: imageId
+      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${imageId}.jpg`
+      : null,
+  };
+
+  res.render("index.ejs", {
+    selectedGame,
+    searchedGame: null
+  });
+});
+
+app.post("/review", async (req, res) => {
+  const { gameId, gameName, reviewText, score } = req.body;
+
+  console.log({
+    gameId,
+    gameName,
+    reviewText,
+    score,
+  });
+
+  // Later: save to PostgreSQL
+  res.redirect("/");
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
