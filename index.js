@@ -2,20 +2,23 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 import axios from "axios";
+import env from "dotenv";
+
 
 const app = express();
 const port = 4000;
+env.config();
 
-const CLIENT_ID = '9njidm9ekkmmk2c3wbaarn7z0opfq9';
-const ACCESS_TOKEN = '8jp1uikfy3to4ftlgxty9vjcjvpv2d';
+const CLIENT_ID = process.env.CLIENT_ID;
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
 
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "permalist",
-  password: "botan4912",
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: Number(process.env.DB_PORT),
 });
 
 db.connect();
