@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Review - <%= game.name %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <!-- GAME CARD -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+          <h2 class="card-title mb-3"><%= game.name %></h2>
+
+          <% if (game.imageUrl) { %>
+            <img
+              src="<%= game.imageUrl %>"
+              class="img-fluid rounded mb-3"
+              style="max-height: 350px;"
+              alt="<%= game.name %>"
+            >
+          <% } %>
+        </div>
+      </div>
+
+      <!-- REVIEW FORM -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="mb-3">Write your review</h4>
+
+          <form action="/review" method="POST">
+            <!-- Hidden game data -->
+            <input type="hidden" name="gameId" value="<%= game.id %>">
+            <input type="hidden" name="gameName" value="<%= game.name %>">
+            <input type="hidden" name="imageUrl" value="<%= game.imageUrl %>">
+
+            <!-- REVIEW TEXT -->
+            <div class="mb-3">
+              <label class="form-label">Your review</label>
+              <textarea
+                name="reviewText"
+                class="form-control"
+                rows="4"
+                placeholder="What did you think about this game?"
+                required
+              ></textarea>
+            </div>
+
+            <!-- SCORE DROPDOWN -->
+            <div class="mb-3">
+              <label class="form-label">Score</label>
+              <select name="score" class="form-select" required>
+                <option value="">Select a score</option>
+                <% for (let i = 1; i <= 10; i++) { %>
+                  <option value="<%= i %>"><%= i %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between">
+              <a href="/" class="btn btn-outline-secondary">
+                ← Back
+              </a>
+              <button type="submit" class="btn btn-primary">
+                Save Review
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
