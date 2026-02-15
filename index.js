@@ -31,23 +31,35 @@ app.get("/", async (req,res) => {
 
   let reviews = [];
 
-  if (gameId) {
-    const result = await db.query(
-      `
-      SELECT review_text, score, created_at
+  try {
+    const result = await db.query(`
+      SELECT id, game_id, game_name, review_text, score, created_at
       FROM reviews
-      WHERE game_id = $1
-      ORDER BY created_at DESC
-      `,
-      [gameId]
-    );
-    reviews = result.rows;
-  }
-    res.render("index.ejs", {
-      searchedGame: null,
-      selectedGame: null,
-      reviews
+      ORDER BY game_name, created_at DESC
+    `);
+
+    const gamesMap = {};
+
+    result.rows.forEach((review) => {
+      if (!gamesMap[review.game_id]) {
+        gamesMap[review.game_id] = {
+          game_id: review.game_id,
+          game_name: review.game_name,
+          reviews: []
+        };
+      }
+
+      gamesMap[review.game_id].reviews.push(review);
     });
+
+    const games = Object.values(gamesMap);
+
+    res.render("index.ejs", { games });
+
+  } catch (err) {
+    console.error(err);
+    res.render("index.ejs", { games: [] });
+  }
 });
 
 app.post("/search", async (req, res) => {

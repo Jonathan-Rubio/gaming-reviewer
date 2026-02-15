@@ -18,41 +18,57 @@
         </div>
     </form>
 
-<% if (locals.reviews && reviews.length > 0) { %>
+<% if (locals.games && games.length > 0) { %>
 
-    <% reviews.forEach((review) => { %>
-        <div class="card mb-3 shadow-sm">
-            <div class="card-body">
+  <% games.forEach((game) => { %>
+
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+
+        <h3 class="mb-3"><%= game.game_name %></h3>
+
+        <% game.reviews.forEach((review) => { %>
+
+          <div class="border rounded p-3 mb-3 bg-light">
 
             <div class="d-flex justify-content-between align-items-center">
-                <strong>Score: <%= review.score %>/10</strong>
-                <small class="text-muted">
+              <strong>Score: <%= review.score %>/10</strong>
+              <small class="text-muted">
                 <%= new Date(review.created_at).toLocaleDateString() %>
-                </small>
+              </small>
             </div>
 
             <p class="mt-2"><%= review.review_text %></p>
 
             <div class="d-flex gap-2">
 
-                <!-- EDIT -->
-                <form action="/edit-review" method="POST">
+              <!-- EDIT -->
+              <form action="/edit-review" method="POST">
                 <input type="hidden" name="reviewId" value="<%= review.id %>">
-                <button class="btn btn-sm btn-warning">Edit</button>
-                </form>
+                <button class="btn btn-sm btn-warning">
+                  Edit
+                </button>
+              </form>
 
-                <!-- DELETE -->
-                <form action="/delete-review" method="POST">
+              <!-- DELETE -->
+              <form action="/delete-review" method="POST">
                 <input type="hidden" name="reviewId" value="<%= review.id %>">
-                <input type="hidden" name="gameId" value="<%= selectedGame?.id %>">
-                <button class="btn btn-sm btn-danger">Delete</button>
-                </form>
+                <button class="btn btn-sm btn-danger">
+                  Delete
+                </button>
+              </form>
 
             </div>
 
-            </div>
-        </div>
-    <% }); %>
+          </div>
+
+        <% }) %>
+
+      </div>
+    </div>
+
+  <% }) %>
+
 <% } %>
     
     <% if (locals.selectedGame) { %>
