@@ -26,8 +26,28 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", (req,res) => {
-    res.render("index.ejs");
+app.get("/", async (req,res) => {
+  const {gameId} = req.query;
+
+  let reviews = [];
+
+  if (gameId) {
+    const result = await db.query(
+      `
+      SELECT review_text, score, created_at
+      FROM reviews
+      WHERE game_id = $1
+      ORDER BY created_at DESC
+      `,
+      [gameId]
+    );
+    reviews = result.rows;
+  }
+    res.render("index.ejs", {
+      searchedGame: null,
+      selectedGame: null,
+      reviews
+    });
 });
 
 app.post("/search", async (req, res) => {
@@ -74,36 +94,50 @@ app.post("/search", async (req, res) => {
 app.post("/select", async (req, res) => {
   const { gameId, gameName, imageId } = req.body;
 
-  if (!gameId) {
-    return res.redirect("/");
-  }
+  // if (!gameId) {
+  //   return res.redirect("/");
+  // }
 
-  const selectedGame = {
-    id: gameId,
-    name: gameName,
-    imageUrl: imageId
-      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${imageId}.jpg`
-      : null,
-  };
+  const reviewsResult = await db.query(
+    `
+    SELECT review_text, score, created_at
+    FROM reviews
+    WHERE game_id = $1
+    ORDER BY created_at DESC
+    `,
+    [gameId]
+  );
 
   res.render("index.ejs", {
-    selectedGame,
-    searchedGame: null
+    selectedGame: {
+      id: gameId,
+      name: gameName,
+      imageUrl: imageId
+        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${imageId}.jpg`
+        : null,
+    },
+    searchedGame: null,
+    reviews: reviewsResult.rows
   });
 });
 
 app.post("/review", async (req, res) => {
   const { gameId, gameName, reviewText, score } = req.body;
 
-  console.log({
-    gameId,
-    gameName,
-    reviewText,
-    score,
-  });
+  try {
+    await db.query(
+      `
+      INSERT INTO reviews (game_id, game_name, review_text, score)
+      VALUES ($1, $2, $3, $4)
+      `,
+      [gameId, gameName, reviewText, score]
+    );
 
-  // Later: save to PostgreSQL
-  res.redirect("/");
+    res.redirect(`/?gameId=${gameId}`);
+  } catch (error) {
+    console.error(error);
+    res.redirect("/");
+  }
 });
 
 

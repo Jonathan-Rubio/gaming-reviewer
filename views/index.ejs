@@ -18,6 +18,21 @@
         </div>
     </form>
 
+<% if (locals.reviews && reviews.length > 0) { %>
+
+  <% reviews.forEach((review) => { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5>Score: <%= review.score %>/10</h5>
+        <p><%= review.review_text %></p>
+      </div>
+    </div>
+  <% }) %>
+
+<% } else { %>
+  <p>No reviews yet.</p>
+<% } %>
+    
     <% if (locals.selectedGame) { %>
         <div class="container mt-4">
             <div class="card shadow-sm mb-4">
@@ -37,7 +52,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h4 class="mb-3">Write your review</h4>
-
+                  
                     <form action="/review" method="POST">
                         <input type="hidden" name="gameId" value="<%= selectedGame.id %>">
                         <input type="hidden" name="gameName" value="<%= selectedGame.name %>">
