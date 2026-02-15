@@ -94,13 +94,9 @@ app.post("/search", async (req, res) => {
 app.post("/select", async (req, res) => {
   const { gameId, gameName, imageId } = req.body;
 
-  // if (!gameId) {
-  //   return res.redirect("/");
-  // }
-
   const reviewsResult = await db.query(
     `
-    SELECT review_text, score, created_at
+    SELECT id, review_text, score, created_at
     FROM reviews
     WHERE game_id = $1
     ORDER BY created_at DESC
@@ -140,6 +136,63 @@ app.post("/review", async (req, res) => {
   }
 });
 
+app.post("/delete-review", async (req, res) => {
+  const { reviewId, gameId } = req.body;
+  
+  try {
+    await db.query(
+      `
+      DELETE FROM reviews
+      WHERE id = $1
+      `,
+      [reviewId]
+    );
+
+    res.redirect(`/?gameId=${gameId}`);
+
+  } catch (error) {
+    console.error(error);
+    res.redirect("/");
+  }
+});
+
+app.post("/edit-review", async (req, res) => {
+  const {reviewId} = req.body;
+  try {
+    const result = await db.query(
+      `
+      SELECT * FROM reviews WHERE id = $1
+      `,
+      [reviewId]
+    );
+    res.render("edit-review.ejs", { review: result.rows[0] });
+
+  } catch (error) {
+    console.error(error);
+    res.redirect("/");
+  }
+});
+
+app.post("/update-review", async (req, res) => {
+  const {reviewId, reviewText, score, gameId} = req.body;
+  try {
+    await db.query(
+      `
+      UPDATE reviews
+      SET review_text = $1, 
+      score = $2
+      WHERE id = $3
+      `,
+      [reviewText, score, reviewId]
+    );
+
+    res.redirect(`/?gameId=${gameId}`);
+    
+  } catch (error) {
+    console.error(error);
+    res.redirect("/");
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
