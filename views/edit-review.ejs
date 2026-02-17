@@ -17,16 +17,40 @@
       <textarea class="form-control" name="reviewText" rows="4" required><%= review.review_text %></textarea>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Score</label>
-      <select class="form-select" name="score">
-        <% for (let i = 1; i <= 10; i++) { %>
-          <option value="<%= i %>" <%= review.score == i ? "selected" : "" %>>
+    <div class="mb-4">
+      <label class="form-label fw-bold">Your Rating</label>
+      
+      <div class="d-flex flex-wrap gap-2">
+
+        <% for(let i = 1; i <= 10; i++) { 
+            let colorClass = "";
+
+            if(i <= 4) {
+              colorClass = "btn-outline-danger";
+            } else if(i <= 7) {
+              colorClass = "btn-outline-warning";
+            } else {
+              colorClass = "btn-outline-success";
+            }
+        %>
+
+          <input type="radio"
+                class="btn-check"
+                name="score"
+                id="score<%= i %>"
+                value="<%= i %>"
+                required>
+
+          <label class="btn <%= colorClass %> rounded-pill px-3"
+                for="score<%= i %>">
             <%= i %>
-          </option>
+          </label>
+
         <% } %>
-      </select>
+
+      </div>
     </div>
+
 
     <button class="btn btn-primary">Update Review</button>
   </form>
