@@ -88,42 +88,73 @@
     <div class="container mt-4">
         <% if (locals.games && games.length > 0) { %>
             <% games.forEach((game) => { %>
+
                 <div class="card mb-4 shadow-sm">
+                <div class="row g-0">
+
+                    <!-- GAME IMAGE -->
+                    <div class="col-md-3 text-center bg-dark">
+                    <% if (game.cover_image) { %>
+                        <img 
+                        src="https://images.igdb.com/igdb/image/upload/t_cover_big/<%= game.cover_image %>.jpg"
+                        class="img-fluid rounded-start p-3"
+                        alt="<%= game.game_name %> Cover"
+                        >
+                    <% } else { %>
+                        <div class="p-5 text-muted">No Image</div>
+                    <% } %>
+                    </div>
+
+                    <!-- GAME CONTENT -->
+                    <div class="col-md-9">
                     <div class="card-body">
+
                         <h3 class="mb-3"><%= game.game_name %></h3>
+
                         <% game.reviews.forEach((review) => { %>
                         <div class="border rounded p-3 mb-3 bg-light">
+
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>Score: <%= review.score %>/10</strong>
-                                <small class="text-muted">
-                                    <%= new Date(review.created_at).toLocaleDateString() %>
-                                </small>
+                            <strong>Score: <%= review.score %>/10</strong>
+                            <small class="text-muted">
+                                <%= new Date(review.created_at).toLocaleDateString() %>
+                            </small>
                             </div>
+
                             <p class="mt-2"><%= review.review_text %></p>
+
                             <div class="d-flex gap-2">
 
-                                <!-- EDIT -->
-                                <form action="/edit-review" method="POST">
-                                    <input type="hidden" name="reviewId" value="<%= review.id %>">
-                                    <button class="btn btn-sm btn-warning">
-                                    Edit
-                                    </button>
-                                </form>
+                            <!-- EDIT -->
+                            <form action="/edit-review" method="POST">
+                                <input type="hidden" name="reviewId" value="<%= review.id %>">
+                                <button class="btn btn-sm btn-warning">
+                                Edit
+                                </button>
+                            </form>
 
-                                <!-- DELETE -->
-                                <form action="/delete-review" method="POST">
-                                    <input type="hidden" name="reviewId" value="<%= review.id %>">
-                                    <button class="btn btn-sm btn-danger">
-                                    Delete
-                                    </button>
-                                </form>
+                            <!-- DELETE -->
+                            <form action="/delete-review" method="POST">
+                                <input type="hidden" name="reviewId" value="<%= review.id %>">
+                                <button class="btn btn-sm btn-danger">
+                                Delete
+                                </button>
+                            </form>
+
                             </div>
                         </div>
                         <% }); %>
+
                     </div>
+                    </div>
+
                 </div>
+                </div>
+
             <% }); %>
         <% } %>
+
+
         
         <% if (locals.selectedGame) { %>
             <div class="container mt-4">
@@ -131,9 +162,9 @@
                     <div class="card-body text-center">
                         <h2><%= selectedGame.name %></h2>
 
-                        <% if (selectedGame.imageUrl) { %>
+                        <% if (selectedGame.imageId) { %>
                             <img
-                                src="<%= selectedGame.imageUrl %>"
+                                src="https://images.igdb.com/igdb/image/upload/t_cover_big/<%= selectedGame.imageId %>.jpg"
                                 class="img-fluid rounded mb-3"
                                 style="max-width: 300px;">
                         <% } %>
@@ -148,6 +179,7 @@
                         <form action="/review" method="POST">
                             <input type="hidden" name="gameId" value="<%= selectedGame.id %>">
                             <input type="hidden" name="gameName" value="<%= selectedGame.name %>">
+                            <input type="hidden" name="imageId" value="<%= selectedGame.imageId %>">
 
                             <!-- REVIEW TEXT -->
                             <div class="mb-3">

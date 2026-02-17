@@ -48,7 +48,26 @@
     <% games.forEach((game) => { %>
 
       <div class="card mb-4 shadow-sm text-dark">
-        <div class="card-body">
+        <div class="row g-0">
+
+          <!-- GAME IMAGE -->
+          <div class="col-md-3 text-center bg-dark">
+            <% if (game.cover_image) { %>
+              <img 
+                src="https://images.igdb.com/igdb/image/upload/t_cover_big/<%= game.cover_image %>.jpg"
+                class="img-fluid rounded-start p-3"
+                alt="<%= game.game_name %> Cover"
+              >
+            <% } else { %>
+              <div class="p-5 text-muted">No Image</div>
+            <% } %>
+
+          </div>
+
+          <!-- GAME CONTENT -->
+          <div class="col-md-9">
+            <div class="card-body">
+
 
           <h3 class="mb-3"><%= game.game_name %></h3>
 
@@ -90,7 +109,10 @@
           <% }) %>
 
         </div>
-      </div>
+    </div>
+
+  </div>
+</div>
 
     <% }) %>
 

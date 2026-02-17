@@ -33,7 +33,7 @@ app.get("/", async (req,res) => {
 
   try {
     const result = await db.query(`
-      SELECT id, game_id, game_name, review_text, score, created_at
+      SELECT id, game_id, game_name, review_text, score, created_at, cover_image
       FROM reviews
       ORDER BY game_name, created_at DESC
     `);
@@ -45,6 +45,7 @@ app.get("/", async (req,res) => {
         gamesMap[review.game_id] = {
           game_id: review.game_id,
           game_name: review.game_name,
+          cover_image: review.cover_image,
           reviews: []
         };
       }
@@ -120,9 +121,7 @@ app.post("/select", async (req, res) => {
     selectedGame: {
       id: gameId,
       name: gameName,
-      imageUrl: imageId
-        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${imageId}.jpg`
-        : null,
+      imageId: imageId
     },
     searchedGame: null,
     reviews: reviewsResult.rows
@@ -130,15 +129,15 @@ app.post("/select", async (req, res) => {
 });
 
 app.post("/review", async (req, res) => {
-  const { gameId, gameName, reviewText, score } = req.body;
+  const { gameId, gameName, reviewText, score, imageId } = req.body;
 
   try {
     await db.query(
       `
-      INSERT INTO reviews (game_id, game_name, review_text, score)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO reviews (game_id, game_name, review_text, score, cover_image)
+      VALUES ($1, $2, $3, $4, $5)
       `,
-      [gameId, gameName, reviewText, score]
+      [gameId, gameName, reviewText, score, imageId]
     );
 
     res.redirect(`/?gameId=${gameId}`);
@@ -209,7 +208,7 @@ app.post("/update-review", async (req, res) => {
 app.get("/my-reviews", async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT id, game_id, game_name, review_text, score, created_at
+      SELECT id, game_id, game_name, review_text, score, created_at, cover_image
       FROM reviews
       ORDER BY game_name, created_at DESC
     `);
@@ -220,6 +219,7 @@ app.get("/my-reviews", async (req, res) => {
       if (!gamesMap[review.game_id]) {
         gamesMap[review.game_id] = {
           game_name: review.game_name,
+          cover_image: review.cover_image,
           reviews: []
         };
       }
