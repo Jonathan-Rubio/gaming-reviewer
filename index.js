@@ -206,6 +206,37 @@ app.post("/update-review", async (req, res) => {
   }
 });
 
+app.get("/my-reviews", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT id, game_id, game_name, review_text, score, created_at
+      FROM reviews
+      ORDER BY game_name, created_at DESC
+    `);
+
+    const gamesMap = {};
+
+    result.rows.forEach((review) => {
+      if (!gamesMap[review.game_id]) {
+        gamesMap[review.game_id] = {
+          game_name: review.game_name,
+          reviews: []
+        };
+      }
+
+      gamesMap[review.game_id].reviews.push(review);
+    });
+
+    const games = Object.values(gamesMap);
+
+    res.render("my-reviews.ejs", { games });
+
+  } catch (err) {
+    console.error(err);
+    res.render("my-reviews.ejs", { games: [] });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

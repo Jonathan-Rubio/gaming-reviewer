@@ -6,168 +6,194 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>Gaming Journal</title>
 </head>
-<body class="container mt-4">
+<body>
 
-    <!--SEARCH FORM POST-->
-    <form action="/search" method="POST" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="game" action="/search" method="post" class="form-control" placeholder="Search game..." aria-label="Recipient's username" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
+    <!--NAVBAR-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
+        <div class="container">
+
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="/">🎮 Gaming Journal</a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+            <!-- Left Side Links -->
+            <ul class="navbar-nav me-auto">
+
+                <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+                </li>
+
+                <li class="nav-item">
+                <a class="nav-link" href="/my-reviews">My Reviews</a>
+                </li>
+
+            </ul>
+
+            <!-- Right Side Search -->
+            <form class="d-flex" action="/search" method="POST">
+                <input class="form-control me-2"
+                    type="text"
+                    name="game"
+                    placeholder="Search game..."
+                    required>
+
+                <button class="btn btn-outline-light" type="submit">
+                Search
+                </button>
+            </form>
+
             </div>
+
         </div>
-    </form>
-
-<% if (locals.games && games.length > 0) { %>
-
-  <% games.forEach((game) => { %>
-
-    <div class="card mb-4 shadow-sm">
-      <div class="card-body">
-
-        <h3 class="mb-3"><%= game.game_name %></h3>
-
-        <% game.reviews.forEach((review) => { %>
-
-          <div class="border rounded p-3 mb-3 bg-light">
-
-            <div class="d-flex justify-content-between align-items-center">
-              <strong>Score: <%= review.score %>/10</strong>
-              <small class="text-muted">
-                <%= new Date(review.created_at).toLocaleDateString() %>
-              </small>
-            </div>
-
-            <p class="mt-2"><%= review.review_text %></p>
-
-            <div class="d-flex gap-2">
-
-              <!-- EDIT -->
-              <form action="/edit-review" method="POST">
-                <input type="hidden" name="reviewId" value="<%= review.id %>">
-                <button class="btn btn-sm btn-warning">
-                  Edit
-                </button>
-              </form>
-
-              <!-- DELETE -->
-              <form action="/delete-review" method="POST">
-                <input type="hidden" name="reviewId" value="<%= review.id %>">
-                <button class="btn btn-sm btn-danger">
-                  Delete
-                </button>
-              </form>
-
-            </div>
-
-          </div>
-
-        <% }) %>
-
-      </div>
-    </div>
-
-  <% }) %>
-
-<% } %>
+    </nav>
     
-    <% if (locals.selectedGame) { %>
-        <div class="container mt-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body text-center">
-                    <h2><%= selectedGame.name %></h2>
+    <div class="container mt-4">
+        <% if (locals.games && games.length > 0) { %>
+            <% games.forEach((game) => { %>
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-3"><%= game.game_name %></h3>
+                        <% game.reviews.forEach((review) => { %>
+                        <div class="border rounded p-3 mb-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>Score: <%= review.score %>/10</strong>
+                                <small class="text-muted">
+                                    <%= new Date(review.created_at).toLocaleDateString() %>
+                                </small>
+                            </div>
+                            <p class="mt-2"><%= review.review_text %></p>
+                            <div class="d-flex gap-2">
 
-                    <% if (selectedGame.imageUrl) { %>
-                        <img
-                            src="<%= selectedGame.imageUrl %>"
-                            class="img-fluid rounded mb-3"
-                            style="max-width: 300px;">
-                    <% } %>
-                </div>
-            </div>
+                                <!-- EDIT -->
+                                <form action="/edit-review" method="POST">
+                                    <input type="hidden" name="reviewId" value="<%= review.id %>">
+                                    <button class="btn btn-sm btn-warning">
+                                    Edit
+                                    </button>
+                                </form>
 
-            <!-- REVIEW FORM -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="mb-3">Write your review</h4>
-                  
-                    <form action="/review" method="POST">
-                        <input type="hidden" name="gameId" value="<%= selectedGame.id %>">
-                        <input type="hidden" name="gameName" value="<%= selectedGame.name %>">
-
-                        <!-- REVIEW TEXT -->
-                        <div class="mb-3">
-                            <label class="form-label">Your review</label>
-                            <textarea
-                            name="reviewText"
-                            class="form-control"
-                            rows="4"
-                            required
-                            ></textarea>
+                                <!-- DELETE -->
+                                <form action="/delete-review" method="POST">
+                                    <input type="hidden" name="reviewId" value="<%= review.id %>">
+                                    <button class="btn btn-sm btn-danger">
+                                    Delete
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-
-                        <!-- SCORE DROPDOWN -->
-                        <div class="mb-3">
-                            <label class="form-label">Score</label>
-                            <select name="score" class="form-select" required>
-                                <option value="">Select a score</option>
-                                <% for (let i = 1; i <= 10; i++) { %>
-                                    <option value="<%= i %>"><%= i %></option>
-                                <% } %>
-                            </select>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="/" class="btn btn-outline-secondary">
-                                ← Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                Save Review
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    <% } %>
-
-    <!--RESULTS FROM SEARCH POST-->
-    <% if (locals.searchedGame) { %>
-        <div class="row">
-            <% searchedGame.forEach((game) => { %>
-            <% const gameImageId = game.cover?.image_id; %>
-
-                <div class="col-6 col-md-3 mb-4 text-center">
-
-                    <!-- SELECT FORM POST -->
-                    <form action="/select" method="POST">
-                        <input type="hidden" name="gameId" value="<%= game.id %>">
-                        <input type="hidden" name="gameName" value="<%= game.name %>">
-                        <input type="hidden" name="imageId" value="<%= gameImageId %>">
-
-                        <button type="submit" class="btn p-0 border-0 bg-transparent">
-                            <% if (gameImageId) { %>
-                                <img src="https://images.igdb.com/igdb/image/upload/t_cover_small_2x/<%= gameImageId %>.jpg"
-                                    class="img-fluid rounded shadow-sm"
-                                    alt="<%= game.name %>">
-                            <% } else { %>
-                                <div class="text-muted">No image</div>
-                            <% } %>
-                        </button>
-                    </form>
-
-                    <h6 class="mt-2"><%= game.name %></h6>
-
+                        <% }); %>
+                    </div>
                 </div>
             <% }); %>
-        </div>
-    <% } %>
+        <% } %>
+        
+        <% if (locals.selectedGame) { %>
+            <div class="container mt-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h2><%= selectedGame.name %></h2>
 
-    <% if (locals.error) { %>
-        <div class="alert alert-danger">
-            <%= error %>
-        </div>
-    <% } %>
+                        <% if (selectedGame.imageUrl) { %>
+                            <img
+                                src="<%= selectedGame.imageUrl %>"
+                                class="img-fluid rounded mb-3"
+                                style="max-width: 300px;">
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- REVIEW FORM -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-3">Write your review</h4>
+                    
+                        <form action="/review" method="POST">
+                            <input type="hidden" name="gameId" value="<%= selectedGame.id %>">
+                            <input type="hidden" name="gameName" value="<%= selectedGame.name %>">
+
+                            <!-- REVIEW TEXT -->
+                            <div class="mb-3">
+                                <label class="form-label">Your review</label>
+                                <textarea
+                                name="reviewText"
+                                class="form-control"
+                                rows="4"
+                                required
+                                ></textarea>
+                            </div>
+
+                            <!-- SCORE DROPDOWN -->
+                            <div class="mb-3">
+                                <label class="form-label">Score</label>
+                                <select name="score" class="form-select" required>
+                                    <option value="">Select a score</option>
+                                    <% for (let i = 1; i <= 10; i++) { %>
+                                        <option value="<%= i %>"><%= i %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/" class="btn btn-outline-secondary">
+                                    ← Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    Save Review
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!--RESULTS FROM SEARCH POST-->
+        <% if (locals.searchedGame) { %>
+            <div class="row">
+                <% searchedGame.forEach((game) => { %>
+                <% const gameImageId = game.cover?.image_id; %>
+
+                    <div class="col-6 col-md-3 mb-4 text-center">
+
+                        <!-- SELECT FORM POST -->
+                        <form action="/select" method="POST">
+                            <input type="hidden" name="gameId" value="<%= game.id %>">
+                            <input type="hidden" name="gameName" value="<%= game.name %>">
+                            <input type="hidden" name="imageId" value="<%= gameImageId %>">
+
+                            <button type="submit" class="btn p-0 border-0 bg-transparent">
+                                <% if (gameImageId) { %>
+                                    <img src="https://images.igdb.com/igdb/image/upload/t_cover_small_2x/<%= gameImageId %>.jpg"
+                                        class="img-fluid rounded shadow-sm"
+                                        alt="<%= game.name %>">
+                                <% } else { %>
+                                    <div class="text-muted">No image</div>
+                                <% } %>
+                            </button>
+                        </form>
+
+                        <h6 class="mt-2"><%= game.name %></h6>
+
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if (locals.error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+        <% } %>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
